@@ -25,6 +25,7 @@ class MakeRepository extends GeneratorCommand
 
     /**
      * @return bool|void|null
+     * @throws FileNotFoundException
      */
     public function handle()
     {
@@ -75,11 +76,18 @@ class MakeRepository extends GeneratorCommand
             $this->getNameInput()
         );
 
+        $class_name = Str::afterLast($name, '/');
+
+        if ($this->option('prefix')){
+            $class_name_prefix = $this->option('prefix') . $class_name;
+            $name = str_replace($class_name, $class_name_prefix, $name);
+        }
+
         $repository = config('laravel-common-command.repositories');
         $interface = config('laravel-common-command.interfaces');
 
-        $interface_path = app_path() . "/$interface/{$name}RepositoryInterface.php";
-        $repository_path = $this->option('prefix') ? app_path() . "/$repository/" . ucfirst($this->option('prefix')). "/{$name}Repository.php" : app_path() . "/$repository/{$name}Repository.php";
+        $interface_path = app_path() . "/$interface/{$class_name}RepositoryInterface.php";
+        $repository_path = app_path() . "/$repository/{$name}Repository.php";
 
         return [
             'interface' => $interface_path,
@@ -109,6 +117,8 @@ class MakeRepository extends GeneratorCommand
 
         $stub = $this->replaceInterfaceNamespace($stub);
 
+        $stub = $this->replacePrefix($stub);
+
         return $stub;
     }
 
@@ -122,9 +132,11 @@ class MakeRepository extends GeneratorCommand
         $name = ltrim($name, '\\/');
 
         if ($type === 'interface'){
+            $name = Str::afterLast($name, '\\');
+
             $rootNamespace = $this->rootNamespace() . config('laravel-common-command.interfaces');
         }else{
-            $rootNamespace = $this->option('prefix') ? $this->rootNamespace() . config('laravel-common-command.repositories') . "\\" . $this->option('prefix') : $this->rootNamespace() . config('laravel-common-command.repositories');
+            $rootNamespace = $this->rootNamespace() . config('laravel-common-command.repositories');
         }
 
         if (Str::startsWith($name, $rootNamespace)) {
@@ -159,6 +171,15 @@ class MakeRepository extends GeneratorCommand
         $namespace = $this->rootNamespace() . config('laravel-common-command.interfaces');
 
         return str_replace('DummyInterfaceNamespace', $namespace, $stub);
+    }
+
+    /**
+     * @param $stub
+     * @return string|string[]
+     */
+    protected function replacePrefix(&$stub)
+    {
+        return str_replace('PrefixRepository', $this->option('prefix'), $stub);
     }
 
     /**

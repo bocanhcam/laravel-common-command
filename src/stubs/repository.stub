@@ -5,7 +5,7 @@ namespace DummyNamespace;
 use DummyInterfaceNamespace\DummyClassRepositoryInterface;
 use DummyRootNamespaceModels\DummyModel;
 
-class DummyClassRepository implements DummyClassRepositoryInterface
+class PrefixRepositoryDummyClassRepository implements DummyClassRepositoryInterface
 {
 
     protected $DummyVariable;
