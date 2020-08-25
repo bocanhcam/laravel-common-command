@@ -1,0 +1,22 @@
+<?php
+
+namespace DummyNamespace;
+
+use DummyInterfaceNamespace\DummyClassRepositoryInterface;
+use DummyRootNamespaceModels\DummyModel;
+
+class DummyClassRepository implements DummyClassRepositoryInterface
+{
+
+    protected $DummyVariable;
+
+    /**
+     * DummyClass constructor.
+     * @param DummyClass $DummyVariable
+     */
+    public function __construct(DummyModel $DummyVariable)
+    {
+        $this->DummyVariable = $DummyVariable;
+    }
+
+}

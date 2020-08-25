@@ -1,0 +1,26 @@
+{
+    "name": "hora/laravel-common-command",
+    "description": "Common commands for Laravel",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Dương Việt Hoàng",
+            "email": "hora.alien@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "Hora\\LaravelCommonCommand\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Hora\\LaravelCommonCommand\\LaravelCommonCommandServiceProvider"
+            ]
+        }
+    },
+    "require": {}
+}
