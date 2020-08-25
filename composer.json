@@ -1,7 +1,6 @@
 {
     "name": "hora/laravel-common-command",
     "description": "Common commands for Laravel",
-    "type": "project",
     "license": "MIT",
     "authors": [
         {
