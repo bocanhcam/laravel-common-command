@@ -1,0 +1,70 @@
+<?php
+
+namespace DummyNamespace;
+
+use DummyInterfaceNamespace\DummyClassRepositoryInterface;
+use DummyRootNamespaceModels\DummyModel;
+
+class PrefixRepositoryDummyClassRepository implements DummyClassRepositoryInterface
+{
+
+    protected $DummyVariable;
+
+    /**
+     * DummyClass constructor.
+     * @param DummyClass $DummyVariable
+     */
+    public function __construct(DummyModel $DummyVariable)
+    {
+        $this->DummyVariable = $DummyVariable;
+    }
+
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public function find($id)
+    {
+        return $this->DummyVariable->find($id);
+    }
+
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public function findOrFail($id)
+    {
+        return $this->DummyVariable->findOrFail($id);
+    }
+
+    /**
+     * @param array $data
+     * @return mixed
+     */
+    public function create(array $data)
+    {
+        return $this->DummyVariable->create($data);
+    }
+
+    /**
+     * @param array $data
+     * @param $id
+     * @return mixed
+     */
+    public function update(array $data, $id)
+    {
+        $DummyVariable = $this->findOrFail($id);
+        return $DummyVariable->update($data);
+    }
+
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public function delete($id)
+    {
+        $DummyVariable = $this->findOrFail($id);
+        return $DummyVariable->delete();
+    }
+
+}

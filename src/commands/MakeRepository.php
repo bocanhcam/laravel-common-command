@@ -16,7 +16,7 @@ class MakeRepository extends GeneratorCommand
     /**
      * @var string
      */
-    protected $signature = 'make:repository {name} {--prefix=}';
+    protected $signature = 'make:repository {name} {--prefix=} {--template}';
 
     /**
      * @var string
@@ -55,13 +55,24 @@ class MakeRepository extends GeneratorCommand
     }
 
     /**
-     * @return string[]
+     * @return array|string[]
      */
-    protected function getStubs()
+    protected function getStubs(): array
     {
         return [
             'interface' => __DIR__ . '/../stubs/interface.stub',
             'repository' => __DIR__ . '/../stubs/repository.stub',
+        ];
+    }
+
+    /**
+     * @return array|string[]
+     */
+    protected function getStubsWithTemplate(): array
+    {
+        return [
+            'interface' => __DIR__ . '/../stubs/interface_template.stub',
+            'repository' => __DIR__ . '/../stubs/repository_template.stub',
         ];
     }
 
@@ -105,7 +116,7 @@ class MakeRepository extends GeneratorCommand
      */
     protected function buildRepository($type, $name)
     {
-        $stubs = $this->getStubs();
+        $stubs = $this->option('template') ? $this->getStubsWithTemplate() : $this->getStubs();
 
         $stub = $this->files->get($stubs[$type]);
 
@@ -130,6 +141,7 @@ class MakeRepository extends GeneratorCommand
     protected function qualifyClasses($type, $name): string
     {
         $name = ltrim($name, '\\/');
+        $name = str_replace('/', '\\', $name);
 
         if ($type === 'interface'){
             $name = Str::afterLast($name, '\\');
@@ -143,7 +155,7 @@ class MakeRepository extends GeneratorCommand
             return $name;
         }
 
-        $name = str_replace('/', '\\', $name);
+        //$name = str_replace('/', '\\', $name);
 
         return $this->qualifyClass(
             $this->getDefaultNamespace(trim($rootNamespace, '\\')).'\\'.$name
@@ -205,13 +217,26 @@ class MakeRepository extends GeneratorCommand
         $repository = config('laravel-common-command.repositories');
         $interface = config('laravel-common-command.interfaces');
 
-        $interface_path = "$interface/$input_name"."RepositoryInterface";
-        $repository_path = $this->option('prefix') ? "/$repository/" . ucfirst($this->option('prefix')). "/$input_name"."Repository" : "/$repository/$input_name"."Repository";
+        $input_name = str_replace('\\', '/', $input_name);
 
         if ($type === 'interface') {
+            $name = Str::afterLast($input_name, '/');
+            $interface_path = "$interface/$name"."RepositoryInterface";
             $class_name = $interface_path;
         } else {
-            $class_name = $repository_path;
+            if (Str::contains($input_name, '/')){
+                $name_dir = Str::beforeLast($input_name, '/');
+            }else{
+                $name_dir = "";
+            }
+
+            $name = Str::afterLast($input_name, '/');
+            if ($this->option('prefix')){
+                $repository_path = "/$repository/" . $name_dir . "/" . ucfirst($this->option('prefix')).$name."Repository";
+            }else{
+                $repository_path = "/$repository/". $name_dir . "/".$name."Repository";
+            }
+            $class_name = str_replace('//', '/', $repository_path);
         }
 
         return $this->files->exists($this->getPath($this->qualifyClass($class_name)));
